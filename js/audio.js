@@ -33,6 +33,16 @@ function noise(dur, { vol = .12, freq = 1200, q = .8, at = 0, sweep = 0 } = {}) 
   g.gain.setValueAtTime(.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + dur * .2); g.gain.exponentialRampToValueAtTime(.0001, t + dur);
   src.connect(f).connect(g).connect(ctx.destination); src.start(t); src.stop(t + dur + .05);
 }
+const NOTE = { G4: 392, A4: 440, B4: 493.88, C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99 };
+/** play a little music-box tune: notes like ['G4','C5'] ; beat in ms */
+export function melody(notes, beat = 300) {
+  notes.forEach((n, i) => {
+    if (!NOTE[n]) return;
+    tone(NOTE[n], .9, { at: i * beat / 1000, vol: .07, type: 'triangle' });
+    tone(NOTE[n] * 2, .4, { at: i * beat / 1000, vol: .02 });
+  });
+  return notes.length * beat;
+}
 export const sfx = {
   pop() { tone(520, .12, { slide: 2, vol: .12 }); },
   tap() { tone(760, .07, { vol: .07, type: 'triangle' }); },

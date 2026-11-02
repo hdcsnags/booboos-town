@@ -52,24 +52,26 @@ gear.addEventListener('pointerdown', startHold);
 function openParent() {
   endHold(); loadVoices();
   document.querySelectorAll('#pLevel button').forEach(b => b.classList.toggle('on', b.dataset.level === state.level));
+  $('pMode').value = state.voiceMode || 'booboo'; $('pVoiceRow').hidden = $('pMode').value !== 'device';
   $('pVoice').checked = state.voice; $('pSfx').checked = state.sfx; $('pRate').value = state.rate;
   const sel = $('pVoiceSel'); sel.innerHTML = '';
   const vs = voiceList();
   if (!vs.length) sel.append(new Option(canSpeak ? 'Default voice' : 'No voice on this device', ''));
   vs.forEach(v => sel.append(new Option(`${v.name} (${v.lang})`, v.name, false, v.name === state.voiceName)));
   const st = state.stars;
-  $('pStats').textContent = `Stars: Spider Spout ${st.spider}, Rainbow Lab ${st.rainbow}, Space Center ${st.space}, Code drives ${st.code}. Big words learned: ${state.words.length}.`;
+  $('pStats').textContent = `Stars: Itsy Bitsy Spider ${st.spider}, Rainbow Lab ${st.rainbow}, Space Center ${st.space}, Code drives ${st.code}. Big words learned: ${state.words.length}.`;
   panel.hidden = false;
 }
 document.querySelectorAll('#pLevel button').forEach(b => b.addEventListener('click', () => {
   state.level = b.dataset.level; save();
   document.querySelectorAll('#pLevel button').forEach(x => x.classList.toggle('on', x === b));
 }));
+$('pMode').addEventListener('change', e => { state.voiceMode = e.target.value; save(); $('pVoiceRow').hidden = e.target.value !== 'device'; });
 $('pVoice').addEventListener('change', e => { state.voice = e.target.checked; save(); });
 $('pSfx').addEventListener('change', e => { state.sfx = e.target.checked; save(); });
 $('pRate').addEventListener('input', e => { state.rate = +e.target.value; save(); });
 $('pVoiceSel').addEventListener('change', e => { state.voiceName = e.target.value; save(); loadVoices(); });
-$('pTest').addEventListener('click', () => { unlockAudio(); say('Hi! I am Booboo. Evaporation, condensation, precipitation!'); });
+$('pTest').addEventListener('click', () => { unlockAudio(); say("Hi! I'm Booboo, and this is my town!"); });
 $('pReset').addEventListener('click', () => { if (confirm('Reset all stars and big words?')) { resetProgress(); openParent(); } });
 $('pClose').addEventListener('click', () => { panel.hidden = true; if (stage().dataset.scene === 'town') go('town'); });
 

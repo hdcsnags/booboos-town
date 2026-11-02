@@ -1,7 +1,15 @@
 import { el, txt, node, stage, ask, praise, bigWord, sceneButtons, attachGuide, finish, moveTo, pulse, burst, drag, W, H } from '../ui.js';
 import { spider, cloud, sun, booboFull, flower } from '../art.js';
 import { state, lv, byLv, rand, pick, shuffle } from '../state.js';
-import { sfx } from '../audio.js';
+import { sfx, melody } from '../audio.js';
+
+// The Itsy Bitsy Spider tune (traditional, public domain), one phrase per tap.
+const TUNE = {
+  climb: [['G4', 'C5', 'C5', 'C5', 'D5', 'E5', 'E5'], ['E5', 'D5'], ['C5', 'D5', 'E5'], ['C5']],
+  rain: ['E5', 'E5', 'F5', 'G5', 'G5', 'F5', 'E5', 'F5', 'G5', 'E5'],
+  sun: ['C5', 'C5', 'D5', 'E5', 'E5', 'D5', 'C5', 'D5', 'E5', 'C5'],
+  again: ['G4', 'G4', 'C5', 'C5', 'C5', 'D5', 'E5', 'E5', 'E5', 'D5', 'C5', 'D5', 'E5', 'C5'],
+};
 import { ease } from '../run.js';
 
 /* falling rain inside a box; returns stop() which lets the last drops finish */
@@ -106,7 +114,7 @@ export async function spiderScene(run) {
   el('rect', { x: 560, y: 262, width: 34, height: 430, rx: 8, fill: '#90a4ae' }, root);
   el('rect', { x: 566, y: 262, width: 8, height: 430, fill: '#b0bec5' }, root);
   el('path', { d: 'M560 670 Q560 708 600 708 L650 708 L650 676 L600 676 Q594 676 594 670Z', fill: '#90a4ae' }, root);
-  txt(root, 360, 215, 'Spider Spout', 34, { fill: '#fff', 'font-weight': 700, stroke: '#e6704d', 'stroke-width': 1 });
+  txt(root, 360, 215, 'Itsy Bitsy Spider', 34, { fill: '#fff', 'font-weight': 700, stroke: '#e6704d', 'stroke-width': 1 });
   const puddle = el('ellipse', { cx: 700, cy: 716, rx: 0, ry: 0, fill: '#64b5f6', opacity: .9 }, root);
   const pond = el('ellipse', { cx: 990, cy: 732, rx: 0, ry: 0, fill: '#64b5f6', opacity: .9 }, root);
   const fx = el('g', {}, root);
@@ -122,7 +130,7 @@ export async function spiderScene(run) {
   for (let i = 0; i < 4; i++) {
     pulse(spi.inner);
     await run.tap(spi.inner);
-    pulse(spi.inner, false); sfx.pop();
+    pulse(spi.inner, false); melody(TUNE.climb[i], 280);
     const sp = run.say(lines[i]);
     await moveTo(spi, 577, ys[i], 650, run, ease.out);
     if (i === 3) await sp;
@@ -131,7 +139,7 @@ export async function spiderScene(run) {
   await moveTo(cl, 420, 110, 900, run, ease.out);
   await run.say('Uh oh! A rain cloud. Tap the cloud!');
   pulse(cl.inner); await run.tap(cl.inner); pulse(cl.inner, false);
-  sfx.rain(3.2);
+  sfx.rain(3.2); melody(TUNE.rain, 300);
   let stopRain = rain(run, fx, { x0: 300, x1: 760, y0: 160, y1: 720, n: 46 });
   const songLine = run.say('Down came the rain, and washed the spider out!');
   await run.wait(600);
@@ -147,8 +155,8 @@ export async function spiderScene(run) {
   await moveTo(cl, -300, 110, 1400, run);
   await run.say('Out came the sun! Drag the sun up into the sky.');
   await drag(run, sunN, [1300, 170]);
-  sfx.chime();
-  const dry = run.say('And dried up all the rain!');
+  melody(TUNE.sun, 300);
+  const dry = run.say('Out came the sun, and dried up all the rain!');
   let acc = 0;
   await run.anim(2600, t => {
     puddle.setAttribute('rx', 140 * (1 - t)); puddle.setAttribute('ry', 24 * (1 - t));
@@ -157,6 +165,7 @@ export async function spiderScene(run) {
   await dry;
   await run.say('Where did the rain go? The sun warmed the water, and it turned into water vapor. It floated up into the sky, too tiny to see!');
   await bigWord(run, 'evaporation');
+  melody(TUNE.again, 280);
   run.say('And the itsy bitsy spider climbed up the spout again!');
   spi.inner.removeAttribute('transform');
   await moveTo(spi, 577, 660, 500, run);

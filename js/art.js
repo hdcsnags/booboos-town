@@ -188,7 +188,7 @@ export function spiderHouse(p) {
   el('polygon', { points: '80,-122 108,-122 102,-110 86,-110', fill: '#78909c' }, g);
   el('line', { x1: 94, y1: -150, x2: 94, y2: -80, stroke: '#ccc', 'stroke-width': 1.5 }, g);
   spider(g, { x: 94, y: -72, s: .42 });
-  sign(g, 'Spider Spout');
+  sign(g, 'Itsy Bitsy Spider');
   return g;
 }
 export function rainbowLab(p) {

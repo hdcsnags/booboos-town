@@ -20,7 +20,7 @@ const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]]; // 0 right, 1 down, 2 left, 3 u
 const ABS = { R: 0, D: 1, L: 2, U: 3 };
 
 const PLACES = {
-  spider: { name: 'Spider Spout', emoji: '🕷️', x: 280, y: 202, stop: [1, 1], draw: spiderHouse },
+  spider: { name: 'Itsy Bitsy Spider', emoji: '🕷️', x: 280, y: 202, stop: [1, 1], draw: spiderHouse },
   rainbow: { name: 'Rainbow Lab', emoji: '🌈', x: 930, y: 202, stop: [7, 1], draw: rainbowLab },
   space: { name: 'Space Center', emoji: '🚀', x: 280, y: 858, stop: [2, 4], draw: spaceCenter },
 };

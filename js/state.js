@@ -3,7 +3,7 @@ const KEY = 'booboo-town-v1';
 const DEF = {
   level: 'explorer',            // sprout (~3) | explorer (~4) | scientist (~5+)
   vehicle: 'car',               // car | rover
-  voice: true, voiceName: '', rate: 1,
+  voice: true, voiceMode: 'booboo', voiceName: '', rate: 1,
   sfx: true,
   stars: { spider: 0, rainbow: 0, space: 0, code: 0 },
   words: [],

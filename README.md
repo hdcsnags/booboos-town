@@ -7,7 +7,7 @@ No build step, no tracking, no accounts. Plain HTML + SVG + JavaScript modules; 
 first visit (service worker) and can be installed to the home screen.
 
 ## Buildings
-- **Spider Spout:** the Itsy Bitsy Spider song, then the water cycle (evaporation, condensation,
+- **Itsy Bitsy Spider:** the Itsy Bitsy Spider song, then the water cycle (evaporation, condensation,
   precipitation, collection), putting the cycle in order, rain-gauge maths (counting on, ±10, place
   value, adding tens, differences) and cause-and-effect questions.
 - **Rainbow Lab:** a prism splits white light, paint the spectrum in order (Roy G. Biv), sort light

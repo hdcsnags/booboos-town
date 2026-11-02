@@ -19,7 +19,7 @@ const DETECT = [
   { lv: 1, q: 'Raindrops make rainbows in the sky. What are the raindrops acting like?', o: [{ icon: '🔺', label: 'Tiny prisms', correct: true }, { icon: '🎈', label: 'Balloons' }, { icon: '🍪', label: 'Cookies' }], why: 'Each raindrop bends the sunlight, just like our prism!' },
   { lv: 1, q: 'Sunlight looks white. What is it really made of?', o: [{ icon: '🌈', label: 'All the colors', correct: true }, { icon: '🟡', label: 'Only yellow' }, { icon: '⚪', label: 'Only white' }], why: 'White light is all the colors of the rainbow mixed together!' },
   { lv: 2, q: 'Which light has the SHORTEST waves?', o: [{ icon: '🟣', label: 'Violet', correct: true }, { icon: '🔴', label: 'Red' }, { icon: '🟢', label: 'Green' }], why: 'Violet has short, squished waves. Red has long, stretchy waves.' },
-  { lv: 2, q: 'Rainbows need raindrops. Which part of the water cycle gives us raindrops?', o: [{ icon: '🌧️', label: 'Precipitation', correct: true }, { icon: '☀️', label: 'Evaporation' }, { icon: '☁️', label: 'Condensation' }], why: 'Precipitation! The Spider Spout and the Rainbow Lab are connected!' },
+  { lv: 2, q: 'Rainbows need raindrops. Which part of the water cycle gives us raindrops?', o: [{ icon: '🌧️', label: 'Precipitation', correct: true }, { icon: '☀️', label: 'Evaporation' }, { icon: '☁️', label: 'Condensation' }], why: 'Precipitation! The Itsy Bitsy Spider house and the Rainbow Lab are connected!' },
   { lv: 2, q: 'You shine a flashlight into a glass of water and see colors. Why?', o: [{ icon: '↗️', label: 'Water bends the light', correct: true }, { icon: '🎨', label: 'Paint in the water' }, { icon: '✨', label: 'Magic glass' }], why: 'Water bends light. That is refraction, the same thing a prism does!' },
 ];
 
@@ -113,7 +113,7 @@ export async function rainbowScene(run) {
   }
   burst(root, 800, 200, 30);
   await run.say('Red, orange, yellow, green, blue, indigo, violet! A whole rainbow!');
-  if (lv() > 0) await run.say('Here is a secret trick to remember the order. The first letters make a funny name: Roy G. Biv!');
+  if (lv() > 0) await run.say('Here is a secret trick to remember the order. The first letters make a funny name: Roy G Biv!');
   if (lv() === 2) {
     const r = await ask(run, {
       prompt: 'Brain teaser! Which color is between blue and violet?', y: 690, tileW: 200, tileH: 170,

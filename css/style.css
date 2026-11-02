@@ -99,3 +99,4 @@ body { font-family: 'Fredoka', 'Baloo 2', system-ui, sans-serif; color: var(--in
     background: rgba(255, 209, 232, .96); text-align: center; font-size: 28px; font-weight: 600; color: #ad1457;
   }
 }
+#pVoiceRow[hidden] { display: none; }
