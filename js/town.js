@@ -1,5 +1,5 @@
 import { el, txt, node, stage, svgPoint, burst, bigWord, button, wrapText, pulse, shake, W, H } from './ui.js';
-import { spiderHouse, rainbowLab, spaceCenter, homeHouse, construction, pinkCar, rover, tree, flower, cloud } from './art.js';
+import { spiderHouse, rainbowLab, spaceCenter, homeHouse, gardenLab, bakery, trainStation, pinkCar, rover, tree, flower, cloud } from './art.js';
 import { state, save, lv, pick } from './state.js';
 import { sfx } from './audio.js';
 import { say } from './speech.js';
@@ -23,12 +23,10 @@ const PLACES = {
   spider: { name: 'Itsy Bitsy Spider', emoji: '🕷️', x: 280, y: 202, stop: [1, 1], draw: spiderHouse },
   rainbow: { name: 'Rainbow Lab', emoji: '🌈', x: 930, y: 202, stop: [7, 1], draw: rainbowLab },
   space: { name: 'Space Center', emoji: '🚀', x: 280, y: 858, stop: [2, 4], draw: spaceCenter },
+  garden: { name: 'Garden Lab', emoji: '🌱', x: 745, y: 566, stop: [5, 4], draw: gardenLab },
+  bakery: { name: 'Number Bakery', emoji: '🧁', x: 995, y: 566, stop: [7, 4], draw: bakery },
+  trains: { name: 'Train Station', emoji: '🚂', x: 605, y: 858, stop: [4, 4], draw: trainStation },
 };
-const SOON = [
-  { name: 'Garden Lab', label: 'Garden', emoji: '🌱', x: 745, y: 566, about: 'how seeds grow into plants' },
-  { name: 'Number Bakery', label: 'Bakery', emoji: '🧁', x: 995, y: 566, about: 'sharing, halves and quarters' },
-  { name: 'Train Station', label: 'Trains', emoji: '🚂', x: 605, y: 858, about: 'patterns and puzzles' },
-];
 
 function bfs(from, to) {
   const prev = new Map([[key(from.c, from.r), null]]), q = [[from.c, from.r]];
@@ -89,9 +87,9 @@ export async function town(run, arg) {
   txt(pond.inner, 70, 14, '🐸', 26, { class: 'emoji' });
   pond.inner.addEventListener('pointerdown', e => { e.stopPropagation(); sfx.drip(); say('A pond! When rain falls, the water collects here. That is called collection.'); });
   [[150, 360], [540, 372], [160, 560], [530, 565]].forEach(([x, y]) => tree(map, x, y, .8));
-  [[660, 380], [1080, 380], [1080, 470]].forEach(([x, y]) => tree(map, x, y, .7));
+  [[660, 380], [1080, 380]].forEach(([x, y]) => tree(map, x, y, .7));
   [[430, 30 + 140], [1130, 175], [40, 175], [600, 175], [700, 175]].forEach(([x, y], i) => flower(map, x, y, ['#ff80ab', '#ffd54f', '#ce93d8', '#ff8a65', '#80deea'][i]));
-  [[1140, 860], [1160, 730], [480, 870], [60, 860]].forEach(([x, y]) => tree(map, x, y, .75));
+  [[1140, 860], [1160, 730], [455, 875], [60, 860]].forEach(([x, y]) => tree(map, x, y, .75));
 
   /* ----- buildings ----- */
   for (const k in PLACES) {
@@ -116,10 +114,6 @@ export async function town(run, arg) {
     e.stopPropagation(); if (busy) return;
     if (mode === 'drive') safe(driveTo([6, 4], () => say("Home sweet home! You can pick the pink car or the Mars rover on the right.")));
   });
-  for (const S of SOON) {
-    const n = node(map, S.x, S.y); n.inner.classList.add('tap'); construction(n.inner, S.label, S.emoji);
-    n.inner.addEventListener('pointerdown', e => { e.stopPropagation(); sfx.tap(); say(`The ${S.name} is still being built! Soon you can learn about ${S.about} here.`); });
-  }
 
   /* ----- hint footprints + goal flag layer ----- */
   const hintL = el('g', { 'pointer-events': 'none' }, map);
@@ -236,7 +230,7 @@ export async function town(run, arg) {
     if (mode === 'drive') {
       wrapText(panel, 1399, 470, 'Tap a building and Booboo will drive there!', 30, 20, { fill: '#6a1b4d' });
       const P = node(panel, 1399, 640); P.inner.classList.add('bob');
-      txt(P.inner, -90, 0, '🕷️', 60, { class: 'emoji' }); txt(P.inner, 0, 0, '🌈', 60, { class: 'emoji' }); txt(P.inner, 90, 0, '🚀', 60, { class: 'emoji' });
+      ['🕷️', '🌈', '🚀', '🌱', '🧁', '🚂'].forEach((e, i) => txt(P.inner, -100 + (i % 3) * 100, (i < 3 ? -45 : 45), e, 60, { class: 'emoji' }));
       wrapText(panel, 1399, 790, 'Try Code mode to program Booboo\'s route!', 24, 26, { fill: '#7e57c2' });
       return;
     }
@@ -394,13 +388,13 @@ export async function town(run, arg) {
     txt(card.inner, 0, -360, '📖 My Big Words', 48, { fill: '#7b1fa2', 'font-weight': 700 });
     const keys = Object.keys(WORDS);
     keys.forEach((k, i) => {
-      const col = i % 4, row = Math.floor(i / 4);
-      const x = -540 + col * 360, y = -250 + row * 140;
+      const col = i % 5, row = Math.floor(i / 5);
+      const x = -580 + col * 290, y = -255 + row * 118;
       const w = WORDS[k], have = state.words.includes(k);
       const c = node(card.inner, x, y); if (have) c.inner.classList.add('tap');
-      el('rect', { x: -165, y: -58, width: 330, height: 116, rx: 24, fill: have ? '#f3e5f5' : '#f5f5f5', stroke: have ? '#ce93d8' : '#e0e0e0', 'stroke-width': 4 }, c.inner);
-      txt(c.inner, -118, 2, have ? w.icon : '❔', 48, { class: 'emoji' });
-      wrapText(c.inner, 30, 2, have ? w.word : '???', w.word.length > 13 ? 24 : 28, 13, { fill: have ? '#4a148c' : '#bdbdbd', 'font-weight': 700 });
+      el('rect', { x: -138, y: -52, width: 276, height: 104, rx: 22, fill: have ? '#f3e5f5' : '#f5f5f5', stroke: have ? '#ce93d8' : '#e0e0e0', 'stroke-width': 4 }, c.inner);
+      txt(c.inner, -98, 2, have ? w.icon : '❔', 44, { class: 'emoji' });
+      wrapText(c.inner, 30, 2, have ? w.word : '???', w.word.length > 12 ? 22 : 26, 12, { fill: have ? '#4a148c' : '#bdbdbd', 'font-weight': 700 });
       if (have) c.inner.addEventListener('pointerdown', e => { e.stopPropagation(); sfx.tap(); say(`${w.word}. ${w.meaning}`); });
     });
     const x = button(card.inner, 0, 360, 240, 80, 'Close', { icon: '✖', fill: '#fce4ec', stroke: '#f48fb1' });

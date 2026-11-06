@@ -1,26 +1,13 @@
 // Network first (so updates show up right away), falling back to the cache when offline.
-// After install, Booboo's recorded voice clips are cached in the background for offline play.
-const CACHE = 'booboo-town-v2';
+// Voice clips are cache-first; the page fetches them all once in the background (js/speech.js warm()).
+const CACHE = 'booboo-town-v3';
 const CORE = ['./', 'index.html', 'css/style.css', 'manifest.webmanifest', 'icon.svg', 'icon-512.png',
   'js/main.js', 'js/nav.js', 'js/run.js', 'js/ui.js', 'js/art.js', 'js/state.js', 'js/speech.js', 'js/audio.js', 'js/words.js', 'js/town.js',
-  'js/scenes/spider.js', 'js/scenes/rainbow.js', 'js/scenes/space.js', 'audio/voice/index.json'];
-async function cacheVoice() {
-  try {
-    const c = await caches.open(CACHE);
-    const idx = await (await fetch('audio/voice/index.json', { cache: 'no-cache' })).json();
-    const files = [...new Set(Object.values(idx.clips))];
-    for (let i = 0; i < files.length; i += 20) {
-      await Promise.all(files.slice(i, i + 20).map(async f => {
-        const url = 'audio/voice/' + f;
-        if (!(await c.match(url))) { const r = await fetch(url); if (r.ok) await c.put(url, r); }
-      }));
-    }
-  } catch (e) {}
-}
+  'js/scenes/spider.js', 'js/scenes/rainbow.js', 'js/scenes/space.js',
+  'js/scenes/common.js', 'js/scenes/garden.js', 'js/scenes/bakery.js', 'js/scenes/trains.js'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim()));
-  cacheVoice();
 });
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;

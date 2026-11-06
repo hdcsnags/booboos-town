@@ -7,16 +7,35 @@ import { state } from './state.js';
  * own text-to-speech for just that sentence (and logs "voice-missing" so it can be added).
  */
 
-/* ---------- recorded clips ---------- */
+/* ---------- recorded clips: one folder per voice (audio/voice/jenny, audio/voice/ava) ---------- */
+export const VOICES = { jenny: 'Jenny', ava: 'Ava' };
 let VO = null;
+const warmed = {};
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-fetch('audio/voice/index.json').then(r => r.ok ? r.json() : null).then(j => {
-  if (!j) return;
-  VO = {
-    clips: j.clips,
-    tpl: j.templates.map(parts => ({ parts, re: new RegExp('^' + parts.map(esc).join(' ?(.+?) ?') + '$') })),
-  };
-}).catch(() => {});
+const recorded = () => VOICES[state.voiceMode] ? state.voiceMode : null;
+export function loadRecorded() {
+  const v = recorded();
+  if (!v) return;
+  if (VO && VO.v === v) return;
+  fetch(`audio/voice/${v}/index.json`).then(r => r.ok ? r.json() : null).then(j => {
+    if (!j || recorded() !== v) return;
+    VO = {
+      v, dir: `audio/voice/${v}/`, clips: j.clips,
+      tpl: j.templates.map(parts => ({ parts, re: new RegExp('^' + parts.map(esc).join(' ?(.+?) ?') + '$') })),
+    };
+    warm(VO);
+  }).catch(() => {});
+}
+/* Fetch every clip once in the background, so the service worker keeps them for offline play. */
+function warm(vo) {
+  if (warmed[vo.v] || window.BT_FAST || !navigator.serviceWorker?.controller || navigator.connection?.saveData) return;
+  warmed[vo.v] = 1;
+  const files = [...new Set(Object.values(vo.clips))];
+  let i = 0;
+  const next = () => { if (i >= files.length) return; fetch(vo.dir + files[i++]).catch(() => {}).finally(() => setTimeout(next, 30)); };
+  setTimeout(() => { for (let k = 0; k < 4; k++) next(); }, 4000);
+}
+loadRecorded();
 export const recordedReady = () => !!VO;
 
 /** MUST match norm() in tools/voice.py */
@@ -142,9 +161,9 @@ export function say(text, { caption = text } = {}) {
     if (!state.voice || window.BT_FAST) { t2 = setTimeout(fin, est); return; }
     try { if (can) speechSynthesis.cancel(); } catch (e) {}
     t2 = setTimeout(fin, est * 1.6 + 6000); // safety net: some engines never report the end
-    if (VO && state.voiceMode !== 'device') {
+    if (VO && VO.v === recorded()) {
       const items = resolve(text);
-      const audios = items.map(it => { if (!it.f) return null; const a = new Audio('audio/voice/' + it.f); a.preload = 'auto'; return a; });
+      const audios = items.map(it => { if (!it.f) return null; const a = new Audio(VO.dir + it.f); a.preload = 'auto'; return a; });
       let k = 0;
       const next = () => {
         if (g !== gen || k >= items.length) return fin();

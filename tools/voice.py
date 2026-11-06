@@ -1,19 +1,26 @@
 """Record every line Booboo can say with a natural neural voice (Microsoft Edge "Ava").
 
-    python tools/voice.py              # record anything new (existing clips are kept)
-    python tools/voice.py --list       # just print what would be recorded
-    python tools/voice.py --voice en-US-EmmaNeural --fresh   # re-record everything in another voice
+    python tools/voice.py                              # Jenny: record anything new (existing clips are kept)
+    python tools/voice.py --voice en-US-AvaNeural      # Ava: same, into audio/voice/ava
+    python tools/voice.py --list                       # just print what would be recorded
+Each voice lives in audio/voice/<name>/ and can be picked in the game's Grown-ups panel
+(add a new one to the pMode list in index.html).
 
 It reads the game's JavaScript, pulls out every sentence, and every template like
 `The gauge has ${a}.` as fixed pieces ("the gauge has") with a gap. Numbers 0-200 are recorded on
 their own, so js/speech.js can stitch a line like "The gauge has 47." from clips at runtime.
-Output: audio/voice/*.mp3 + audio/voice/index.json
+Output: audio/voice/<name>/*.mp3 + audio/voice/<name>/index.json
 """
 import argparse, asyncio, hashlib, json, re, sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / 'audio' / 'voice'
+OUT = None  # audio/voice/<short name>, e.g. audio/voice/jenny for en-US-JennyNeural
+
+
+def voice_dir(voice: str) -> Path:
+    short = re.sub(r'^[a-z]{2}-[A-Z]{2}-|Neural$|MultilingualNeural$', '', voice).lower()
+    return ROOT / 'audio' / 'voice' / short
 HOLE = '\u0001'
 
 
@@ -188,11 +195,13 @@ async def record(clips, voice, rate, fresh):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--voice', default='en-US-AvaNeural')
+    ap.add_argument('--voice', default='en-US-JennyNeural')
     ap.add_argument('--rate', default='-6%')
     ap.add_argument('--list', action='store_true')
     ap.add_argument('--fresh', action='store_true')
     a = ap.parse_args()
+    global OUT
+    OUT = voice_dir(a.voice)
     clips, templates = collect()
     if a.list:
         for k, t in clips.items():

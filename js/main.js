@@ -3,11 +3,14 @@ import { town } from './town.js';
 import { spiderScene } from './scenes/spider.js';
 import { rainbowScene } from './scenes/rainbow.js';
 import { spaceScene } from './scenes/space.js';
+import { gardenScene } from './scenes/garden.js';
+import { bakeryScene } from './scenes/bakery.js';
+import { trainsScene } from './scenes/trains.js';
 import { el, txt, node, stage, W, H } from './ui.js';
 import { booboFull, pinkCar, cloud, sun, flower } from './art.js';
 import { unlockAudio, sfx } from './audio.js';
 import { state, save, resetProgress } from './state.js';
-import { voiceList, loadVoices, say, canSpeak } from './speech.js';
+import { voiceList, loadVoices, say, canSpeak, loadRecorded, hush } from './speech.js';
 
 async function title(run) {
   const s = stage();
@@ -40,6 +43,9 @@ scenes.town = town;
 scenes.spider = spiderScene;
 scenes.rainbow = rainbowScene;
 scenes.space = spaceScene;
+scenes.garden = gardenScene;
+scenes.bakery = bakeryScene;
+scenes.trains = trainsScene;
 
 /* ---------- grown-ups panel: hold the gear ---------- */
 const $ = id => document.getElementById(id);
@@ -52,21 +58,21 @@ gear.addEventListener('pointerdown', startHold);
 function openParent() {
   endHold(); loadVoices();
   document.querySelectorAll('#pLevel button').forEach(b => b.classList.toggle('on', b.dataset.level === state.level));
-  $('pMode').value = state.voiceMode || 'booboo'; $('pVoiceRow').hidden = $('pMode').value !== 'device';
+  $('pMode').value = state.voiceMode; $('pVoiceRow').hidden = $('pMode').value !== 'device';
   $('pVoice').checked = state.voice; $('pSfx').checked = state.sfx; $('pRate').value = state.rate;
   const sel = $('pVoiceSel'); sel.innerHTML = '';
   const vs = voiceList();
   if (!vs.length) sel.append(new Option(canSpeak ? 'Default voice' : 'No voice on this device', ''));
   vs.forEach(v => sel.append(new Option(`${v.name} (${v.lang})`, v.name, false, v.name === state.voiceName)));
   const st = state.stars;
-  $('pStats').textContent = `Stars: Itsy Bitsy Spider ${st.spider}, Rainbow Lab ${st.rainbow}, Space Center ${st.space}, Code drives ${st.code}. Big words learned: ${state.words.length}.`;
+  $('pStats').textContent = `Stars: Itsy Bitsy Spider ${st.spider}, Rainbow Lab ${st.rainbow}, Space Center ${st.space}, Garden Lab ${st.garden}, Number Bakery ${st.bakery}, Train Station ${st.trains}, Code drives ${st.code}. Big words learned: ${state.words.length}.`;
   panel.hidden = false;
 }
 document.querySelectorAll('#pLevel button').forEach(b => b.addEventListener('click', () => {
   state.level = b.dataset.level; save();
   document.querySelectorAll('#pLevel button').forEach(x => x.classList.toggle('on', x === b));
 }));
-$('pMode').addEventListener('change', e => { state.voiceMode = e.target.value; save(); $('pVoiceRow').hidden = e.target.value !== 'device'; });
+$('pMode').addEventListener('change', e => { state.voiceMode = e.target.value; save(); $('pVoiceRow').hidden = e.target.value !== 'device'; hush(); loadRecorded(); });
 $('pVoice').addEventListener('change', e => { state.voice = e.target.checked; save(); });
 $('pSfx').addEventListener('change', e => { state.sfx = e.target.checked; save(); });
 $('pRate').addEventListener('input', e => { state.rate = +e.target.value; save(); });

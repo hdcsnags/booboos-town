@@ -242,3 +242,73 @@ export function construction(p, label, emoji) {
   sign(g, label + ' 🚧', 6);
   return g;
 }
+
+/* ---------- the newer buildings ---------- */
+export function gardenLab(p) {
+  const g = el('g', {}, p);
+  el('rect', { x: -84, y: -8, width: 168, height: 8, fill: '#8d6e63' }, g);
+  el('path', { d: 'M-80 0 L-80 -70 A80 70 0 0 1 80 -70 L80 0Z', fill: 'rgba(225,245,254,.85)', stroke: '#81c784', 'stroke-width': 5 }, g);
+  for (const x of [-40, 0, 40]) el('line', { x1: x, y1: 0, x2: x, y2: x ? -128 : -140, stroke: '#a5d6a7', 'stroke-width': 3 }, g);
+  el('line', { x1: -80, y1: -70, x2: 80, y2: -70, stroke: '#a5d6a7', 'stroke-width': 3 }, g);
+  [[-58, '#66bb6a'], [-20, '#43a047'], [22, '#66bb6a'], [58, '#43a047']].forEach(([x, c]) => {
+    el('path', { d: `M${x} -8 Q${x - 14} -40 ${x} -52 Q${x + 14} -40 ${x} -8Z`, fill: c }, g);
+  });
+  // a sunflower on top
+  el('line', { x1: 0, y1: -140, x2: 0, y2: -168, stroke: '#558b2f', 'stroke-width': 5 }, g);
+  for (let i = 0; i < 10; i++) { const a = i * 36 * Math.PI / 180; el('ellipse', { cx: Math.cos(a) * 14, cy: -178 + Math.sin(a) * 14, rx: 9, ry: 5, fill: '#ffd54f', transform: `rotate(${i * 36} ${Math.cos(a) * 14} ${-178 + Math.sin(a) * 14})` }, g); }
+  el('circle', { cx: 0, cy: -178, r: 10, fill: '#6d4c41' }, g);
+  sign(g, 'Garden Lab');
+  return g;
+}
+export function bakery(p) {
+  const g = el('g', {}, p);
+  el('rect', { x: -78, y: -100, width: 156, height: 100, fill: '#fff8e1', stroke: '#ffcc80', 'stroke-width': 4 }, g);
+  for (let i = 0; i < 6; i++) el('path', { d: `M${-84 + i * 28} -104 h28 v18 a14 14 0 0 1 -28 0Z`, fill: i % 2 ? '#fff' : '#f06292' }, g);
+  el('rect', { x: -60, y: -66, width: 50, height: 40, rx: 6, fill: '#bbdefb', stroke: '#ffcc80', 'stroke-width': 4 }, g);
+  el('rect', { x: 18, y: -66, width: 40, height: 66, rx: 6, fill: '#a1887f', stroke: '#ffcc80', 'stroke-width': 4 }, g);
+  // giant cupcake on the roof
+  el('path', { d: 'M-30 -104 L-22 -136 L22 -136 L30 -104Z', fill: '#ffb74d', stroke: '#f57c00', 'stroke-width': 3 }, g);
+  el('path', { d: 'M-30 -136 Q-34 -160 -10 -160 Q0 -182 10 -160 Q34 -160 30 -136Z', fill: '#f8bbd0', stroke: '#ec407a', 'stroke-width': 3 }, g);
+  el('circle', { cx: 0, cy: -178, r: 8, fill: '#e53935' }, g);
+  sign(g, 'Number Bakery');
+  return g;
+}
+export function trainStation(p) {
+  const g = el('g', {}, p);
+  el('rect', { x: -112, y: -14, width: 224, height: 14, fill: '#a1887f' }, g);
+  el('rect', { x: -100, y: -96, width: 90, height: 82, fill: '#e3f2fd', stroke: '#64b5f6', 'stroke-width': 4 }, g);
+  el('polygon', { points: '-110,-94 -55,-128 0,-94', fill: '#1e88e5', stroke: '#1565c0', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+  el('circle', { cx: -55, cy: -70, r: 14, fill: '#fff', stroke: '#1565c0', 'stroke-width': 3 }, g);
+  el('path', { d: 'M-55 -70 V-79 M-55 -70 H-48', stroke: '#1565c0', 'stroke-width': 3 }, g);
+  // little engine
+  const t = el('g', { transform: 'translate(40 -14)' }, g);
+  el('rect', { x: -26, y: -56, width: 70, height: 40, rx: 6, fill: '#e53935' }, t);
+  el('rect', { x: -24, y: -84, width: 30, height: 30, rx: 4, fill: '#c62828' }, t);
+  el('rect', { x: -18, y: -78, width: 18, height: 14, rx: 3, fill: '#bbdefb' }, t);
+  el('rect', { x: 24, y: -74, width: 12, height: 20, fill: '#424242' }, t);
+  for (const x of [-12, 12, 32]) el('circle', { cx: x, cy: -12, r: 10, fill: '#424242', stroke: '#9e9e9e', 'stroke-width': 3 }, t);
+  sign(g, 'Train Station');
+  return g;
+}
+/** a sunflower at a life-cycle stage: 0 seed, 1 sprout, 2 seedling, 3 bud, 4 flower, 5 seed head */
+export function plantStage(p, stage, { x = 0, y = 0, s = 1 } = {}) {
+  const g = el('g', { transform: `translate(${x} ${y}) scale(${s})` }, p);
+  if (stage === 0) {
+    el('ellipse', { cx: 0, cy: -10, rx: 16, ry: 24, fill: '#5d4037', transform: 'rotate(20 0 -10)' }, g);
+    el('path', { d: 'M-4 -28 Q4 -12 -2 8', stroke: '#d7ccc8', 'stroke-width': 3, fill: 'none' }, g);
+    return g;
+  }
+  const h = [0, 40, 80, 130, 150, 150][stage];
+  el('path', { d: `M0 0 Q${stage > 2 ? 6 : 3} ${-h / 2} 0 ${-h}`, stroke: '#558b2f', 'stroke-width': stage > 2 ? 9 : 6, fill: 'none', 'stroke-linecap': 'round' }, g);
+  const leaf = (lx, ly, dir, sz) => el('path', { d: `M${lx} ${ly} q${dir * sz} ${-sz * .9} ${dir * sz * 1.7} ${-sz * .2} q${-dir * sz * .7} ${sz * .9} ${-dir * sz * 1.7} ${sz * .2}Z`, fill: '#7cb342' }, g);
+  if (stage === 1) { leaf(0, -h, -1, 14); leaf(0, -h, 1, 14); return g; }
+  leaf(0, -h * .45, -1, 24); leaf(0, -h * .6, 1, 24);
+  if (stage >= 3) { leaf(0, -h * .25, 1, 28); leaf(0, -h * .8, -1, 22); }
+  if (stage === 2) { leaf(0, -h, -1, 16); leaf(0, -h, 1, 16); return g; }
+  if (stage === 3) { el('circle', { cx: 0, cy: -h - 10, r: 14, fill: '#9ccc65', stroke: '#689f38', 'stroke-width': 3 }, g); return g; }
+  const petals = stage === 4 ? '#ffd54f' : '#c5a24a';
+  for (let i = 0; i < 14; i++) { const a = i * (360 / 14); el('ellipse', { cx: 0, cy: -h - 10 - 30, rx: 9, ry: 20, fill: petals, opacity: stage === 5 ? .55 : 1, transform: `rotate(${a} 0 ${-h - 10})` }, g); }
+  el('circle', { cx: 0, cy: -h - 10, r: 24, fill: '#6d4c41' }, g);
+  if (stage === 5) for (let i = 0; i < 16; i++) { const a = i * 2.4, r = 4 + i * 1.2; el('ellipse', { cx: Math.cos(a) * r, cy: -h - 10 + Math.sin(a) * r, rx: 3, ry: 4.5, fill: '#efebe9' }, g); }
+  return g;
+}

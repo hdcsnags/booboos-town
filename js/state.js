@@ -3,9 +3,9 @@ const KEY = 'booboo-town-v1';
 const DEF = {
   level: 'explorer',            // sprout (~3) | explorer (~4) | scientist (~5+)
   vehicle: 'car',               // car | rover
-  voice: true, voiceMode: 'booboo', voiceName: '', rate: 1,
+  voice: true, voiceMode: 'jenny', voiceName: '', rate: 1,   // voiceMode: jenny | ava | device
   sfx: true,
-  stars: { spider: 0, rainbow: 0, space: 0, code: 0 },
+  stars: { spider: 0, rainbow: 0, space: 0, garden: 0, bakery: 0, trains: 0, code: 0 },
   words: [],
   seen: {},                     // one-time intros already given
 };
@@ -15,6 +15,7 @@ export const state = { ...structuredClone(DEF), ...s };
 state.stars = { ...DEF.stars, ...(s.stars || {}) };
 state.seen = { ...(s.seen || {}) };
 if (!Array.isArray(state.words)) state.words = [];
+if (!['jenny', 'ava', 'device'].includes(state.voiceMode)) state.voiceMode = 'jenny';
 
 export function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 export function resetProgress() {
